@@ -1,7 +1,7 @@
 pragma solidity ^0.6.7;
 
 import "./IOracle.sol";
-import "@chainlink/contracts/src/v0.6/interfaces/AggregatorInterface.sol";
+import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 
 contract ChainlinkOracle is IOracle{
 
@@ -15,10 +15,11 @@ contract ChainlinkOracle is IOracle{
      */
     constructor(address oracle_, uint shift) public {
         oracle = oracle_;
-        decimalShift = shift;
+        decimalShift = AggregatorV3Interface(oracle_).decimals();
     }
 
     function latestPrice() external override view returns (uint) {
-        return uint(AggregatorInterface(oracle).latestAnswer());
+        (,int price,,,) = AggregatorV3Interface(oracle).latestRoundData();
+        return uint(price);
     }
 }
