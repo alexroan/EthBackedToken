@@ -22,14 +22,6 @@ contract MockEthBackedToken is EthBackedToken {
         return _burn(usmAmount);
     }
 
-    function ethToUsm(uint _ethAmount) public view returns (uint) {
-        return _ethToUsm(_ethAmount);
-    }
-
-    function usmToEth(uint usmAmount) public view returns (uint) {
-        return _usmToEth(usmAmount);
-    }
-
     function oraclePrice() public view returns (uint) {
         return _oraclePrice();
     }

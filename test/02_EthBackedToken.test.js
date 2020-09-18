@@ -43,14 +43,14 @@ contract('EthBackedToken', (accounts) => {
     it('returns the value of eth in usm', async () => {
       const oneEth = WAD
       const equivalentUSM = oneEth.mul(priceWAD).div(WAD)
-      let usmAmount = (await token.ethToUsm(oneEth)).toString()
+      let usmAmount = (await token.ethToToken(oneEth)).toString()
       usmAmount.should.equal(equivalentUSM.toString())
     })
 
     it('returns the value of usm in eth', async () => {
       const oneUSM = WAD
       const equivalentEth = oneUSM.mul(WAD).div(priceWAD)
-      let ethAmount = (await token.usmToEth(oneUSM)).toString()
+      let ethAmount = (await token.tokenToEth(oneUSM)).toString()
       ethAmount.should.equal(equivalentEth.toString())
     })
 
