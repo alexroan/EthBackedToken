@@ -13,9 +13,9 @@ contract ChainlinkOracle is IOracle{
      * address: 0x30B5068156688f818cEa0874B580206dFe081a03
      * decShift: 8
      */
-    constructor(address oracle_, uint shift) public {
-        oracle = oracle_;
-        decimalShift = AggregatorV3Interface(oracle_).decimals();
+    constructor(address newOracle, uint shift) public {
+        oracle = newOracle;
+        decimalShift = AggregatorV3Interface(newOracle).decimals();
     }
 
     function latestPrice() external override view returns (uint) {

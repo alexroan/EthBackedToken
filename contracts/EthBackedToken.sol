@@ -103,7 +103,6 @@ contract EthBackedToken is ERC20 {
      * @return price
      */
     function _oraclePrice() internal view returns (uint) {
-        // Needs a convertDecimal(IOracle(oracle).decimalShift(), UNIT) function.
         return IOracle(oracle).latestPrice().mul(WAD).div(10 ** IOracle(oracle).decimalShift());
     }
 }
