@@ -26,22 +26,22 @@ contract EthBackedToken is ERC20 {
     }
 
     /**
-     * @notice Mint USM from Eth. Inheriting contract must handle the Ether transfers.
+     * @notice Mint token from Eth. Inheriting contract must handle the Ether transfers.
      */
     function _mint(uint ethAmount) internal returns (uint) {
-        uint usmAmount = _ethToUsm(ethAmount);
+        uint tokenAmount = ethToToken(ethAmount);
         ethPool = ethPool.add(ethAmount);
-        super._mint(msg.sender, usmAmount);
-        return usmAmount;
+        super._mint(msg.sender, tokenAmount);
+        return tokenAmount;
     }
 
     /**
-     * @notice Burn USM for Eth. Inheriting contract must handle the Ether transfers.
+     * @notice Burn token for Eth. Inheriting contract must handle the Ether transfers.
      */
-    function _burn(uint usmAmount) internal returns (uint) {
-        uint ethAmount = _usmToEth(usmAmount);
+    function _burn(uint tokenAmount) internal returns (uint) {
+        uint ethAmount = tokenToEth(tokenAmount);
         ethPool = ethPool.sub(ethAmount);
-        super._burn(msg.sender, usmAmount);
+        super._burn(msg.sender, tokenAmount);
         return ethAmount;
     }
 
@@ -51,14 +51,14 @@ contract EthBackedToken is ERC20 {
      * @return ETH buffer
      */
     function ethBuffer() public view returns (int) {
-        int buffer = int(ethPool) - int(_usmToEth(totalSupply()));
+        int buffer = int(ethPool) - int(tokenToEth(totalSupply()));
         require(buffer <= int(ethPool), "Underflow error");
         return buffer;
     }
 
     /**
-     * @notice Calculate debt ratio of the current Eth pool amount and outstanding USM
-     * (the amount of USM in total supply).
+     * @notice Calculate debt ratio of the current Eth pool amount and outstanding token
+     * (the amount of token in total supply).
      *
      * @return Debt ratio.
      */
@@ -66,17 +66,17 @@ contract EthBackedToken is ERC20 {
         if (ethPool == 0) {
             return 0;
         }
-        return totalSupply().wadDiv(_ethToUsm(ethPool));
+        return totalSupply().wadDiv(ethToToken(ethPool));
     }
 
     /**
-     * @notice Convert ETH amount to USM using the latest price of USM
+     * @notice Convert ETH amount to token using the latest price of token
      * in ETH.
      *
      * @param _ethAmount The amount of ETH to convert.
-     * @return The amount of USM.
+     * @return The amount of token.
      */
-    function _ethToUsm(uint _ethAmount) internal view returns (uint) {
+    function ethToToken(uint _ethAmount) public view returns (uint) {
         if (_ethAmount == 0) {
             return 0;
         }
@@ -84,17 +84,17 @@ contract EthBackedToken is ERC20 {
     }
 
     /**
-     * @notice Convert USM amount to ETH using the latest price of USM
+     * @notice Convert token amount to ETH using the latest price of token
      * in ETH.
      *
-     * @param _usmAmount The amount of USM to convert.
+     * @param _tokenAmount The amount of token to convert.
      * @return The amount of ETH.
      */
-    function _usmToEth(uint _usmAmount) internal view returns (uint) {
-        if (_usmAmount == 0) {
+    function tokenToEth(uint _tokenAmount) public view returns (uint) {
+        if (_tokenAmount == 0) {
             return 0;
         }
-        return _usmAmount.wadDiv(_oraclePrice());
+        return _tokenAmount.wadDiv(_oraclePrice());
     }
 
     /**
